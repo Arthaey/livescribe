@@ -23,7 +23,11 @@ input.gsub!(/\*\s*(.+?)\s*\*/m, "*\\1*")
 input.gsub!(/(^|\s+)-(\s+|$)/, " — ")
 
 # Personal tweak: put smileys in <tt> tags.
-input.gsub!(/(\s|\b)+([:;][)(P])(\s|\b)*/, "\\1<tt>\\2</tt>\\3")
+input.gsub!(/(\s|\b)+([:;][)(P])(\s|\b)*/, " <tt>\\2</tt> ")
+input.gsub!(/(\s|\b)+"([)(P])(\s|\b)*/, " <tt>:\\2</tt> ")
+
+# Personal tweak: put "(?)" into superscripts.
+input.gsub!(/(\s|\b)*C\?\)/, "<sup class='uncertain'>(?)</sup>")
 
 # TODO: write a custom Redcarpet renderer for Livescribe output?
 # http://dev.af83.com/2012/02/27/howto-extend-the-redcarpet2-markdown-lib.html
