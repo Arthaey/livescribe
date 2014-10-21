@@ -3,7 +3,7 @@ require "redcarpet"
 
 class Livescribe
 
-  @@entities = HTMLEntities.new("html4")
+  @@entities = HTMLEntities.new
 
   def self.to_markdown(input)
     livescribe = Livescribe.new(input)
