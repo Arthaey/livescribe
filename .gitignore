@@ -1,3 +1,6 @@
+## Personalized project files
+settings.yml
+
 *.gem
 *.rbc
 /.config
