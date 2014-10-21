@@ -12,7 +12,7 @@ class Livescribe
     livescribe.remove_whitespace_around_asterisks!
     livescribe.fix_quotation_marks!
     livescribe.fix_em_dashes!
-    livescribe.wrap_smilies_in_tt!
+    livescribe.wrap_smileys_in_tt!
     livescribe.question_superscript!
 
     # TODO: write a custom Redcarpet renderer for Livescribe output?
@@ -59,7 +59,7 @@ class Livescribe
     @input.gsub!(/(^|\s+)-(\s+|$)/, " — ")
   end
 
-  def wrap_smilies_in_tt!
+  def wrap_smileys_in_tt!
     # Personal tweak: put smileys in <tt> tags.
     @input.gsub!(/(\s|\b)+([:;][)(P])(\s|\b)*/, " <tt>\\2</tt> ")
     @input.gsub!(/(\s|\b)+"([)(P])(\s|\b)*/, " <tt>:\\2</tt> ")
