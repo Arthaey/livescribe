@@ -1,169 +1,267 @@
 require_relative "../lib/livescribe.rb"
+require_relative "../lib/string.rb"
+
+def expect_html(input, output)
+  expect(Livescribe.to_html(input)).to eq(output)
+end
+
+# From activesupport/lib/active_support/core_ext/string/strip.rb
+def strip_heredoc
+  indent = scan(/^[ \t]*(?=\S)/).min.try(:size) || 0
+  gsub(/^[ \t]{#{indent}}/, '')
+end
 
 describe Livescribe do
   describe "#initialize" do
     it "uses input verbatim when it contains no entities" do
-      expect(Livescribe.to_markdown("test")).to eq("<p>test</p>\n")
+      expect_html("foo", "<p>foo</p>\n")
     end
     
     it "decodes hexidecimal entities" do
-      expect(Livescribe.to_markdown("test&#39;s")).to eq("<p>test's</p>\n")
+      expect_html("foo&#39;s", "<p>foo's</p>\n")
     end
 
     it "decodes decimal entities" do
-      expect(Livescribe.to_markdown("test&#x0027;s")).to eq("<p>test's</p>\n")
+      expect_html("foo&#x0027;s", "<p>foo's</p>\n")
     end
 
     it "decodes named entities" do
-      expect(Livescribe.to_markdown("test&apos;s")).to eq("<p>test's</p>\n")
+      expect_html("foo&apos;s", "<p>foo's</p>\n")
     end
   end
 
   describe "#remove_line_breaks!" do
-    it "removes <br> elements"
-    it "does nothing when there are no line breaks"
+    it "removes <br> elements that start a line" do
+      expect_html("foo\n<br>bar", "<p>foo\nbar</p>\n")
+    end
+
+    it "leaves <br> elements that DO NOT start a line" do
+      expect_html("foo\nbar<br>", "<p>foo\nbar<br></p>\n")
+    end
   end
 
   describe "#guess_new_paragraphs!" do
-    context "when the line ends with punctuation" do
-      it "adds a break & keeps next alphabetic characters"
-      it "adds a break & keeps next non-alphabetic characters"
+    context "when the previous line ends with punctuation" do
+      it "adds a break & keeps next alphabetic characters" do
+        expect_html("foo.\nBar", "<p>foo.</p>\n\n<p>Bar</p>\n")
+      end
+
+      it "adds a break & keeps next non-alphabetic characters" do
+        expect_html("foo.\n'Bar", "<p>foo.</p>\n\n<p>'Bar</p>\n")
+      end
     end
 
-    context "when the line DOES NOT end with punctuation" do
-      it "does nothing"
+    context "when it should NOT add a break" do
+      it "ignores when the previous line does not end with punctuation" do
+        expect_html("foo\nBar", "<p>foo\nBar</p>\n")
+      end
+
+      it "ignores when the next line does not start with an uppercase letter" do
+        expect_html("foo.\nbar", "<p>foo.\nbar</p>\n")
+      end
     end
   end
 
   describe "#remove_whitespace_around_asterisks!" do
-    context "with surrounding spaces" do
-      it "removes them from the first asterisk"
-      it "removes them from the second asterisk"
-      it "removes them from both asterisks"
-    end
+      it "removes spaces after the first asterisk" do
+        expect_html("foo * bar* qux", "<p>foo <em>bar</em> qux</p>\n")
+      end
 
-    context "with spaces before" do
-      it "removes them from the first asterisk"
-      it "removes them from the second asterisk"
-      it "removes them from both asterisks"
-    end
+      it "removes spaces before the second asterisk" do
+        expect_html("foo *bar * qux", "<p>foo <em>bar</em> qux</p>\n")
+      end
 
-    context "with spaces after" do
-      it "removes them from the first asterisk"
-      it "removes them from the second asterisk"
-      it "removes them from both asterisks"
-    end
+      it "removes spaces surrounding both asterisks" do
+        expect_html("foo * bar * qux", "<p>foo <em>bar</em> qux</p>\n")
+      end
 
-    context "with no spaces" do
-      it "does nothing to the first asterisk"
-      it "does nothing to the second asterisk"
-      it "does nothing to either asterisk"
-    end
+      it "does nothing when there are no spaces" do
+        expect_html("foo *bar* qux", "<p>foo <em>bar</em> qux</p>\n")
+      end
   end
 
   describe "#fix_quotation_marks!" do
-    it "replaces double apostrophes with a quotation mark"
-    it "does nothing to single apostrophes"
-    it "does nothing to two apostrophes in the same line"
+    it "replaces double apostrophes with a quotation mark" do
+      expect_html("''foo''", "<p>\"foo\"</p>\n")
+    end
+
+    it "does nothing to single apostrophes" do
+      expect_html("'foo'", "<p>'foo'</p>\n")
+    end
   end
 
-  describe "#fix_em_dashes!" do
-    context "at the start of a line" do
-      it "fixes when spaces surround the hyphen"
-      it "fixes when spaces are before the hyphen"
-      it "fixes when spaces are after the hyphen"
-      it "fixes when no spaces surround the hyphen"
+  describe "#fix_dashes!" do
+    it "does nothing when the dash isn't clearly an em-dash OR a list item" do
+      expect_html("foo- bar", "<p>foo- bar</p>\n")
+      expect_html("foo -bar", "<p>foo -bar</p>\n")
     end
 
-    context "NOT at the start of a line" do
-      context "with surrounding spaces" do
-        it "removes them from the first hyphen"
-        it "removes them from the second hyphen"
-        it "removes them from both hyphens"
-      end
-
-      context "with spaces before" do
-        it "removes them from the first hyphen"
-        it "removes them from the second hyphen"
-        it "removes them from both hyphens"
-      end
-
-      context "with spaces after" do
-        it "removes them from the first hyphen"
-        it "removes them from the second hyphen"
-        it "removes them from both hyphens"
-      end
-
-      context "with no spaces" do
-        it "does nothing to the first hyphen"
-        it "does nothing to the second hyphen"
-        it "does nothing to either hyphen"
-      end
+    it "fixes obvious em-dashes" do
+      expect_html("foo - bar", "<p>foo — bar</p>\n")
+      expect_html("foo - bar - qux", "<p>foo — bar — qux</p>\n")
     end
 
-    context "ignores list items" do
-      it "when spaces surround the hyphen"
-      it "when spaces are before the hyphen"
-      it "when spaces are after the hyphen"
-      it "when no spaces surround the hyphen"
+    it "fixes somewhat ambiguous em-dashes" do
+      expect_html("foo - bar- qux", "<p>foo — bar — qux</p>\n")
+      expect_html("foo -bar - qux", "<p>foo — bar — qux</p>\n")
+      expect_html("foo -bar- qux", "<p>foo — bar — qux</p>\n")
     end
 
-    context "when the hyphen isn't clearly an em-dash OR a list item" do
-      it "ignores single hyphens within a line"
+    it "fixes list items that contain no other dashes" do
+      expect_html("- foo", "<ul>\n<li>foo</li>\n</ul>\n")
+    end
+
+    it "fixes list items with em-dashes within them" do
+      expect_html("- foo - bar", "<ul>\n<li>foo — bar</li>\n</ul>\n")
+      expect_html("-foo - bar", "<ul>\n<li>foo — bar</li>\n</ul>\n")
+    end
+
+    it "fixes list items with hyphens within them" do
+      expect_html("-foo-bar", "<ul>\n<li>foo-bar</li>\n</ul>\n")
+    end
+
+    it "fixes list items while ignoring ambiguous dashes" do
+      expect_html("- foo- bar", "<ul>\n<li>foo- bar</li>\n</ul>\n")
+      expect_html("- foo -bar", "<ul>\n<li>foo -bar</li>\n</ul>\n")
+      expect_html("-foo- bar", "<ul>\n<li>foo- bar</li>\n</ul>\n")
+      expect_html("-foo -bar", "<ul>\n<li>foo -bar</li>\n</ul>\n")
     end
   end
 
   describe "#wrap_smileys_in_tt!" do
     context "when there are leading spaces" do
       context "and it gets the eyes right" do
-        it "wraps smileys like :)"
-        it "wraps smileys like :("
-        it "wraps smileys like :P"
-        it "wraps smileys like ;)"
-        it "wraps smileys like ;("
-        it "wraps smileys like ;P"
+        it "wraps smileys like :)" do
+          expect_html("foo :)", "<p>foo <tt>:)</tt> </p>\n")
+        end
+
+        it "wraps smileys like :(" do
+          expect_html("foo :(", "<p>foo <tt>:(</tt> </p>\n")
+        end
+
+        it "wraps smileys like :P" do
+          expect_html("foo :P", "<p>foo <tt>:P</tt> </p>\n")
+        end
+
+        it "wraps smileys like ;)" do
+          expect_html("foo ;)", "<p>foo <tt>;)</tt> </p>\n")
+        end
+
+        it "wraps smileys like ;(" do
+          expect_html("foo ;(", "<p>foo <tt>;(</tt> </p>\n")
+        end
+
+        it "wraps smileys like ;P" do
+          expect_html("foo ;P", "<p>foo <tt>;P</tt> </p>\n")
+        end
       end
 
       context "and it thinks the eyes are quotation marks" do
-        it "wraps smileys like \")"
-        it "wraps smileys like \"("
-        it "wraps smileys like \"P"
+        it "wraps smileys like \")" do
+          expect_html("foo \")", "<p>foo <tt>:)</tt> </p>\n")
+        end
+
+        it "wraps smileys like \"(" do
+          expect_html("foo \"(", "<p>foo <tt>:(</tt> </p>\n")
+        end
+
+        it "wraps smileys like \"P" do
+          expect_html("foo \"P", "<p>foo <tt>:P</tt> </p>\n")
+        end
       end
     end
 
     context "when there are NOT leading spaces" do
       context "and it gets the eyes right" do
-        it "wraps smileys like :)"
-        it "wraps smileys like :("
-        it "wraps smileys like :P"
-        it "wraps smileys like ;)"
-        it "wraps smileys like ;("
-        it "wraps smileys like ;P"
+        it "wraps smileys like :)" do
+          expect_html("foo:)", "<p>foo <tt>:)</tt> </p>\n")
+        end
+
+        it "wraps smileys like :(" do
+          expect_html("foo:(", "<p>foo <tt>:(</tt> </p>\n")
+        end
+
+        it "wraps smileys like :P" do
+          expect_html("foo:P", "<p>foo <tt>:P</tt> </p>\n")
+        end
+
+        it "wraps smileys like ;)" do
+          expect_html("foo;)", "<p>foo <tt>;)</tt> </p>\n")
+        end
+
+        it "wraps smileys like ;(" do
+          expect_html("foo;(", "<p>foo <tt>;(</tt> </p>\n")
+        end
+
+        it "wraps smileys like ;P" do
+          expect_html("foo;P", "<p>foo <tt>;P</tt> </p>\n")
+        end
       end
 
       context "and it thinks the eyes are quotation marks" do
-        it "wraps smileys like \")"
-        it "wraps smileys like \"("
-        it "wraps smileys like \"P"
+        it "wraps smileys like \")" do
+          expect_html("foo\")", "<p>foo <tt>:)</tt> </p>\n")
+        end
+
+        it "wraps smileys like \"(" do
+          expect_html("foo\"(", "<p>foo <tt>:(</tt> </p>\n")
+        end
+
+        it "wraps smileys like \"P" do
+          expect_html("foo\"P", "<p>foo <tt>:P</tt> </p>\n")
+        end
       end
     end
   end
 
   describe "#question_superscript!" do
     context "when there are leading spaces" do
-      it "identifies leading parenthesis as C"
-      it "identifies leading parenthesis as ("
-      it "ignores other characters inside parentheses"
+      it "identifies leading parenthesis as (" do
+        expect_html("foo (?)", "<p>foo<sup class='uncertain'>(?)</sup></p>\n")
+      end
+
+      it "identifies leading parenthesis as C" do
+        expect_html("foo C?)", "<p>foo<sup class='uncertain'>(?)</sup></p>\n")
+      end
+
+      it "ignores other characters inside parentheses" do
+        expect_html("foo (!)", "<p>foo (!)</p>\n")
+      end
     end
 
     context "when there are NOT leading spaces" do
-      it "identifies leading parenthesis as C"
-      it "identifies leading parenthesis as ("
-      it "ignores other characters inside parentheses"
+      it "identifies leading parenthesis as (" do
+        expect_html("foo(?)", "<p>foo<sup class='uncertain'>(?)</sup></p>\n")
+      end
+
+      it "identifies leading parenthesis as C" do
+        expect_html("fooC?)", "<p>foo<sup class='uncertain'>(?)</sup></p>\n")
+      end
+
+      it "ignores other characters inside parentheses" do
+        expect_html("foo(!)", "<p>foo(!)</p>\n")
+      end
     end
   end
 
-  describe ".to_markdown" do
-    it "converts properly"
+  describe ".to_html" do
+    it "does all supported conversions" do
+      input =<<-END.unindent
+        Hello * world*!
+        <br>This is still the first paragraph.
+        <br>This is the second paragraph, but ''Livescribe" doesn't
+        <br>respect(?) paragraph indentations - alas.:)
+      END
+
+      output =<<-END.unindent
+        <p>Hello <em>world</em>!
+        This is still the first paragraph.</p>
+        
+        <p>This is the second paragraph, but "Livescribe" doesn't
+        respect<sup class='uncertain'>(?)</sup> paragraph indentations — alas. <tt>:)</tt> </p>
+      END
+
+      expect_html(input, output)
+    end
   end
 end

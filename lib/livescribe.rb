@@ -5,13 +5,13 @@ class Livescribe
 
   @@entities = HTMLEntities.new
 
-  def self.to_markdown(input)
+  def self.to_html(input)
     livescribe = Livescribe.new(input)
     livescribe.remove_line_breaks!
     livescribe.guess_new_paragraphs!
     livescribe.remove_whitespace_around_asterisks!
     livescribe.fix_quotation_marks!
-    livescribe.fix_em_dashes!
+    livescribe.fix_dashes!
     livescribe.wrap_smileys_in_tt!
     livescribe.question_superscript!
 
@@ -34,39 +34,60 @@ class Livescribe
     @input
   end
 
+  # Livescribe breaks on every line manually.
   def remove_line_breaks!
-    # Livescribe breaks on every line manually.
     @input.gsub!(/^<br>/, "")
   end
 
+  # Livescribe doesn't preserve indented lines as new paragraphs.
   def guess_new_paragraphs!
-    # Livescribe doesn't preserve indented lines as new paragraphs.
-    @input.gsub!(/\.\s*$\n^([A-Z])/m, ".\n\n\\1")
+    @input.gsub!(/\.\s*$\n^([[:punct:][:upper:]])/m, ".\n\n\\1")
   end
 
+  # Livescribe tends to surround asterisks with whitespace.
   def remove_whitespace_around_asterisks!
-    # Livescribe tends to surround asterisks with whitespace.
     @input.gsub!(/\*\s*(.+?)\s*\*/m, "*\\1*")
   end
 
+  # Livescribe sometimes thinks a quotation mark is two apostrophes.
   def fix_quotation_marks!
-    # Livescribe sometimes thinks a quotation mark is two apostrophes.
     @input.gsub!(/''/, '"')
   end
 
-  def fix_em_dashes!
-    # Livescribe turns em-dashes into hyphens.
-    @input.gsub!(/(^|\s+)-(\s+|$)/, " — ")
+  # Livescribe turns em-dashes into hyphens.
+  def fix_dashes!
+    return @input unless @input.include?("-")
+
+    is_list_item = false
+    list_item_regex = /^\s*-\s*/
+    if @input =~ list_item_regex
+      is_list_item = true
+      @input.gsub!(list_item_regex, "")
+    end
+
+    # find all obvious em-dashes (surrounded by spaces)
+    @input.gsub!(/(\s+)-(\s+)/, " — ")
+
+    # find somewhat-ambiguous em-dashes (em-dash plus a "detached hyphen")
+    @input.gsub!(/\s*—\s*(.+?)\s*-(\s*|\b)/, " — \\1 — ")
+    @input.gsub!(/(\s*|\b)-\s*(.+?)\s*—\s*/, " — \\2 — ")
+
+    # find somewhat-ambiguous em-dashes (a pair of "detached hyphens")
+    @input.gsub!(/\s+-(.+?)-\s+/, " — \\1 — ")
+
+    if is_list_item
+      @input.prepend(" - ")
+    end
   end
 
+  # Personal tweak: put smileys in <tt> tags.
   def wrap_smileys_in_tt!
-    # Personal tweak: put smileys in <tt> tags.
-    @input.gsub!(/(\s|\b)+([:;][)(P])(\s|\b)*/, " <tt>\\2</tt> ")
-    @input.gsub!(/(\s|\b)+"([)(P])(\s|\b)*/, " <tt>:\\2</tt> ")
+    @input.gsub!(/([[:punct:]])?(\s*|\b)([:;][)(P])(\s*|\b)/, "\\1 <tt>\\3</tt> ")
+    @input.gsub!(/([[:punct:]])?(\s*|\b)"([)(P])(\s*|\b)/, "\\1 <tt>:\\3</tt> ")
   end
 
+  # Personal tweak: put "(?)" into superscripts.
   def question_superscript!
-    # Personal tweak: put "(?)" into superscripts.
-    @input.gsub!(/(\s|\b)*C\?\)/, "<sup class='uncertain'>(?)</sup>")
+    @input.gsub!(/(\s|\b)*[C(]\?\)/, "<sup class='uncertain'>(?)</sup>")
   end
 end
