@@ -19,6 +19,9 @@ input.gsub!(/\.\s*$\n^([A-Z])/m, ".\n\n\\1")
 # Livescribe tends to surround asterisks with whitespace.
 input.gsub!(/\*\s*(.+?)\s*\*/m, "*\\1*")
 
+# Livescribe sometimes thinks a quotation mark is two apostrophes.
+input.gsub!(/''/, '"')
+
 # Livescribe turns em-dashes into hyphens.
 input.gsub!(/(^|\s+)-(\s+|$)/, " — ")
 
