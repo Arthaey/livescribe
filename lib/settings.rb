@@ -1,6 +1,6 @@
 require "settingslogic"
 
 class Settings < Settingslogic
-  source "settings.yml"
+  source File.join(__dir__, "..", "settings.yml")
   load!
 end
