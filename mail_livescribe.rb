@@ -8,13 +8,15 @@ options = {}
 OptionParser.new do |opts|
   opts.banner = "Usage: #{$0} [options]"
   opts.on("-d", "--[no-]dry-run", "Do not really send email") { |x| options[:dry_run] = x }
-  opts.on("-e", "--[no-]email", "Input is forwarded email")   { |x| options[:email]   = x }
-  opts.on("-p", "--[no-]print", "Print converted input")      { |x| options[:print]   = x }
   opts.on("-v", "--[no-]verbose", "Show verbose information") { |x| options[:verbose] = x }
+  opts.on("-p", "--[no-]print", "Print converted input")      { |x| options[:print]   = x }
+  opts.on("-e", "--[no-]email-input", "Input is a forwarded email") do
+    options[:email_input] = x
+  end
 end.parse!
 
 input = $stdin.read
-if options[:email]
+if options[:email_input]
   input = Mail.new(input).body.decoded
 end
 
