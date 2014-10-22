@@ -4,6 +4,6 @@ class String
   # amount of whitespace on the first line of the string.
   # Leaves _additional_ indentation on later lines intact.
   def unindent
-    gsub /^#{self[/\A\s*/]}/, ''
+    gsub(/^#{self[/\A\s*/]}/, '')
   end
 end
