@@ -28,6 +28,7 @@ PLATFORMS
 
 DEPENDENCIES
   htmlentities
+  mail
   pony
   redcarpet
   rspec

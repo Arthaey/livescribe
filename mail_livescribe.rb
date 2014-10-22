@@ -1,3 +1,4 @@
+require "mail"
 require "pony"
 require_relative "lib/livescribe.rb"
 require_relative "lib/settings.rb"
