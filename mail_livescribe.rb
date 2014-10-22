@@ -10,7 +10,7 @@ OptionParser.new do |opts|
   opts.on("-d", "--[no-]dry-run", "Do not really send email") { |x| options[:dry_run] = x }
   opts.on("-v", "--[no-]verbose", "Show verbose information") { |x| options[:verbose] = x }
   opts.on("-p", "--[no-]print", "Print converted input")      { |x| options[:print]   = x }
-  opts.on("-e", "--[no-]email-input", "Input is a forwarded email") do
+  opts.on("-e", "--[no-]email-input", "Input is a forwarded email") do |x|
     options[:email_input] = x
   end
 end.parse!
