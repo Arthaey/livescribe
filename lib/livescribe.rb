@@ -27,6 +27,7 @@ class Livescribe
 
   def initialize(input)
     # Livescribe exports things like apostrophes as decimal entities.
+    input.force_encoding("UTF-8")
     @input = @@entities.decode(input)
   end
 
