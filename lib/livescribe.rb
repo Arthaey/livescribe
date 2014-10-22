@@ -14,6 +14,7 @@ class Livescribe
     livescribe.fix_dashes!
     livescribe.wrap_smileys_in_tt!
     livescribe.question_superscript!
+    livescribe.fix_parentheses!
 
     # TODO: write a custom Redcarpet renderer for Livescribe output?
     # http://dev.af83.com/2012/02/27/howto-extend-the-redcarpet2-markdown-lib.html
@@ -92,5 +93,10 @@ class Livescribe
   # Personal tweak: put "(?)" into superscripts.
   def question_superscript!
     @input.gsub!(/(\s|\b)*[C(]\?\)/, "<sup class='uncertain'>(?)</sup>")
+  end
+
+  # Livescribe sometimes turns leading parentheses into C's.
+  def fix_parentheses!
+    @input.gsub!(/C([^)]+?)\)/, "(\\1)")
   end
 end

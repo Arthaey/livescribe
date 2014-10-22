@@ -246,6 +246,16 @@ describe Livescribe do
     end
   end
 
+  describe "#fix_parentheses" do
+    it "fixes leading parenthesis identified as C" do
+      expect_html("foo Cbar)", "<p>foo (bar)</p>\n")
+    end
+
+    it "does nothing to leading parenthesis identified as (" do
+      expect_html("foo (bar)", "<p>foo (bar)</p>\n")
+    end
+  end
+
   describe ".to_html" do
     it "does all supported conversions" do
       input =<<-END.unindent
@@ -266,4 +276,5 @@ describe Livescribe do
       expect_html(input, output)
     end
   end
+
 end
