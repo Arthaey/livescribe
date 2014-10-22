@@ -1,10 +1,25 @@
 require "mail"
+require "optparse"
 require "pony"
 require_relative "lib/livescribe.rb"
 require_relative "lib/settings.rb"
 
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: #{$0} [options]"
+  opts.on("-d", "--[no-]dry-run", "Do not really send email") { |x| options[:dry_run] = x }
+  opts.on("-e", "--[no-]email", "Input is forwarded email")   { |x| options[:email]   = x }
+  opts.on("-p", "--[no-]print", "Print converted input")      { |x| options[:print]   = x }
+  opts.on("-v", "--[no-]verbose", "Show verbose information") { |x| options[:verbose] = x }
+end.parse!
+
 input = $stdin.read
+if options[:email]
+  input = Mail.new(input).body.decoded
+end
+
 output = Livescribe.to_html(input)
+puts output if options[:print]
 
 mail_options = {
   :from      => Settings.from_email,
@@ -20,5 +35,5 @@ if Settings["cc_email"]
   debug_msg += " and CC'd to #{Settings.cc_email}"
 end
 
-Pony.mail(mail_options)
-puts debug_msg
+Pony.mail(mail_options) unless options[:dry_run]
+puts debug_msg if options[:verbose]
