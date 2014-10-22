@@ -1,2 +1,3 @@
-to_email: "your.account@blogger.com"
 from_email: "you@example.com"
+to_email: "your.account@blogger.com"
+cc_email: "cc@example.com"
