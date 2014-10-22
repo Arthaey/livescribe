@@ -109,6 +109,8 @@ describe Livescribe do
 
     it "fixes list items that contain no other dashes" do
       expect_html("- foo", "<ul>\n<li>foo</li>\n</ul>\n")
+      expect_html("- foo\n- bar", "<ul>\n<li>foo</li>\n<li>bar</li>\n</ul>\n")
+      expect_html(" - foo\n - bar", "<ul>\n<li>foo</li>\n<li>bar</li>\n</ul>\n")
     end
 
     it "fixes list items with em-dashes within them" do

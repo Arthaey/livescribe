@@ -59,10 +59,12 @@ class Livescribe
     return @input unless @input.include?("-")
 
     is_list_item = false
-    list_item_regex = /^\s*-\s*/
+    list_item_regex = /^\s*-\s*/m
+    list_placeholder = "LIST_ITEM"
+
     if @input =~ list_item_regex
       is_list_item = true
-      @input.gsub!(list_item_regex, "")
+      @input.gsub!(list_item_regex, list_placeholder)
     end
 
     # find all obvious em-dashes (surrounded by spaces)
@@ -76,7 +78,7 @@ class Livescribe
     @input.gsub!(/\s+-(.+?)-\s+/, " — \\1 — ")
 
     if is_list_item
-      @input.prepend(" - ")
+      @input.gsub!(list_placeholder, " - ")
     end
   end
 
