@@ -1,23 +1,15 @@
 require "pony"
-require "yaml"
 require_relative "lib/livescribe.rb"
-
-SETTINGS_FILE = "settings.yml"
-
-if !File.exist?(SETTINGS_FILE)
-  abort "ERROR: Could not find settings file '#{SETTINGS_FILE}'."
-end
-
-settings = YAML.load_file(SETTINGS_FILE)
+require_relative "lib/settings.rb"
 
 input = $stdin.read
 output = Livescribe.to_html(input)
 
 Pony.mail(
-  :to        => settings["email"]["to"],
-  :from      => settings["email"]["from"],
+  :to        => Settings.to_email,
+  :from      => Settings.from_email,
   :html_body => output,
   :via       => :sendmail
 )
 
-puts "Email sent to #{settings["email"]["to"]}."
+puts "Email sent to #{Settings.to_email}."

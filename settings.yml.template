@@ -1,3 +1,2 @@
-email:
-  to: "your.account@blogger.com"
-  from: "you@example.com"
+to_email: "your.account@blogger.com"
+from_email: "you@example.com"
