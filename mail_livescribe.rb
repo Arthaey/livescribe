@@ -9,12 +9,14 @@ OptionParser.new do |opts|
   opts.on("-d", "--[no-]dry-run", "Do not really send email") { |x| options[:dry_run] = x }
   opts.on("-v", "--[no-]verbose", "Show verbose information") { |x| options[:verbose] = x }
   opts.on("-p", "--[no-]print", "Print converted input")      { |x| options[:print]   = x }
-  opts.on("-t", "--[no-]to EMAIL", "To: email address")       { |x| options[:to]      = x }
-  opts.on("-c", "--[no-]cc EMAIL", "Cc: email address")       { |x| options[:cc]      = x }
-  opts.on("-f", "--[no-]from EMAIL", "From: email address")   { |x| options[:from]    = x }
   opts.on("-e", "--[no-]email-input", "Input is a forwarded email") do |x|
     options[:email_input] = x
   end
+
+  # Override values in settings.yml
+  opts.on("-t", "--[no-]to EMAIL", "To: email address")       { |x| options[:to]      = x }
+  opts.on("-c", "--[no-]cc EMAIL", "Cc: email address")       { |x| options[:cc]      = x }
+  opts.on("-f", "--[no-]from EMAIL", "From: email address")   { |x| options[:from]    = x }
 end.parse!
 
 input = $stdin.read
