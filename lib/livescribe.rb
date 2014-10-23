@@ -11,7 +11,7 @@ class Livescribe
 
   @@entities = HTMLEntities.new
 
-  def self.to_html(input)
+  def self.to_html!(input)
     livescribe = Livescribe.new(input)
     livescribe.remove_line_breaks!
     livescribe.guess_new_paragraphs!

@@ -2,7 +2,7 @@ require_relative "../lib/livescribe.rb"
 require_relative "../lib/string.rb"
 
 def expect_html(input, output)
-  expect(Livescribe.to_html(input)).to eq(output)
+  expect(Livescribe.to_html!(input)).to eq(output)
 end
 
 # TODO: test when there's more than one of each formatting thing in the input.

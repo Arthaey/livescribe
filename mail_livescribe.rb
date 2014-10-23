@@ -24,7 +24,7 @@ if options[:email_input]
   input = Mail.new(input).body.decoded
 end
 
-output = Livescribe.to_html(input)
+output = Livescribe.to_html!(input)
 puts output if options[:print]
 
 from_email = options[:from] || Settings.from_email
