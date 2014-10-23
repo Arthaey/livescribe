@@ -5,12 +5,6 @@ def expect_html(input, output)
   expect(Livescribe.to_html(input)).to eq(output)
 end
 
-# From activesupport/lib/active_support/core_ext/string/strip.rb
-def strip_heredoc
-  indent = scan(/^[ \t]*(?=\S)/).min.try(:size) || 0
-  gsub(/^[ \t]{#{indent}}/, '')
-end
-
 describe Livescribe do
   describe "#initialize" do
     it "uses input verbatim when it contains no entities" do
