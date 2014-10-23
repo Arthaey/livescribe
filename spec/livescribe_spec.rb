@@ -5,6 +5,7 @@ def expect_html(input, output)
   expect(Livescribe.to_html(input)).to eq(output)
 end
 
+# TODO: test when there's more than one of each formatting thing in the input.
 describe Livescribe do
   describe "#initialize" do
     it "uses input verbatim when it contains no entities" do
@@ -247,6 +248,21 @@ describe Livescribe do
 
     it "does nothing to leading parenthesis identified as (" do
       expect_html("foo (bar)", "<p>foo (bar)</p>\n")
+    end
+  end
+
+  describe "#insert_flickr" do
+    it "links to existing photos" do
+      expect_html("#Flickr: pLAtRM", <<-FLICKR.unindent
+        <div class="photo">
+          <a href="https://www.flickr.com/photos/arthaey/15600859011" title="Shell prompt while working on my Livescribe script by Arthaey Angosii, on Flickr">
+            <img src="https://farm6.staticflickr.com/5607/15600859011_fc8848a221_m.jpg" alt="Shell prompt while working on my Livescribe script" width="109" height="33">
+            <br/>
+            <span class="photo-title">Shell prompt while working on my Livescribe script</span>
+          </a>
+        </div>
+      FLICKR
+      )
     end
   end
 

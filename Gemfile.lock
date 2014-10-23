@@ -2,6 +2,9 @@ GEM
   remote: https://rubygems.org/
   specs:
     diff-lcs (1.2.5)
+    flickraw (0.9.8)
+    flickraw-cached (20120701)
+      flickraw (>= 0.9)
     htmlentities (4.3.2)
     mail (2.6.1)
       mime-types (>= 1.16, < 3)
@@ -25,6 +28,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  flickraw-cached
   htmlentities
   mail
   redcarpet

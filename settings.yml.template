@@ -1,3 +1,5 @@
 from_email: "you@example.com"
 to_email: "your.account@blogger.com"
 cc_email: "cc@example.com"
+flickr_api_key: "abcdef1234567890abcdef1234567890"
+flickr_shared_secret: "abcedf1234567890"

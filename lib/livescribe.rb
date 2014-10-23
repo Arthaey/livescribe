@@ -1,7 +1,13 @@
+require "flickraw-cached"
 require "htmlentities"
 require "redcarpet"
+require_relative "string.rb"
+require_relative "settings.rb"
 
 class Livescribe
+
+  FlickRaw.api_key = Settings["flickr_api_key"]
+  FlickRaw.shared_secret = Settings["flickr_shared_secret"]
 
   @@entities = HTMLEntities.new
 
@@ -15,6 +21,7 @@ class Livescribe
     livescribe.wrap_smileys_in_tt!
     livescribe.question_superscript!
     livescribe.fix_parentheses!
+    livescribe.insert_flickr!
 
     # TODO: write a custom Redcarpet renderer for Livescribe output?
     # http://dev.af83.com/2012/02/27/howto-extend-the-redcarpet2-markdown-lib.html
@@ -99,4 +106,40 @@ class Livescribe
   def fix_parentheses!
     @input.gsub!(/C([^)]+?)\)/, "(\\1)")
   end
+
+  def insert_flickr!
+    flickr_regex = /#Flickr: (\w+)/
+    @input.scan(flickr_regex).each do |matches|
+      short_id = matches.first
+      begin
+        photo = flickr.photos.getInfo(:photo_id => short_id)
+        title = photo.title
+
+        user_path = photo.owner.path_alias
+        user_name = photo.owner.realname
+        user_id = photo.owner.nsid
+        url = FlickRaw.url_photopage(photo).sub(user_id, user_path)
+
+        sizes = flickr.photos.getSizes(:photo_id => short_id)
+        small_photo = sizes.find { |s| s["label"] == "Small" }
+        width = small_photo["width"]
+        height =  small_photo["height"]
+        source = small_photo["source"]
+
+        @input.sub!(/#Flickr: #{short_id}/, <<-FLICKR.unindent
+          <div class="photo">
+            <a href="#{url}" title="#{title} by #{user_name}, on Flickr">
+              <img src="#{source}" alt="#{title}" width="#{width}" height="#{height}">
+              <br/>
+              <span class="photo-title">#{title}</span>
+            </a>
+          </div>
+        FLICKR
+        )
+      rescue FlickRaw::FailedResponse => e
+        $stderr.puts "ERROR: public Flickr photo with short ID '#{short_id}' not found."
+      end
+    end
+  end
+
 end
