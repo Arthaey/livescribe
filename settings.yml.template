@@ -8,6 +8,9 @@ hashtag_deliveries:
   ToFoo: "foo@example.com"
   BarStuff: "bar@example.com"
 
+# Path to log file
+log: "/path/to/livescribe.log"
+
 # Get your Flickr API key at https://www.flickr.com/services/apps/create/apply/
 flickr_api_key: "abcdef1234567890abcdef1234567890"
 flickr_shared_secret: "abcedf1234567890"

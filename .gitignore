@@ -1,5 +1,6 @@
 ## Personalized project files
 settings.yml
+livescribe.log
 
 *.gem
 *.rbc
