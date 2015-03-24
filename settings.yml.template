@@ -3,7 +3,7 @@ from_email: "you@example.com"
 to_email: "your.account@blogger.com"
 cc_email: "cc@example.com"
 
-# Override default email addresses
+# Override default email addresses (matches are case-INsensitive)
 hashtag_deliveries:
   ToFoo: "foo@example.com"
   BarStuff: "bar@example.com"

@@ -20,8 +20,12 @@ class Livescribe
   end
 
   def initialize(input, hashtag_deliveries = {})
-    @hashtag_deliveries = hashtag_deliveries
+    # Normalize hashtag deliveries keys, for case-insensitive searching.
     @hashtag_delivery = nil
+    @hashtag_deliveries = {}
+    hashtag_deliveries.each_pair do |tag,email|
+      @hashtag_deliveries[tag.upcase] = email
+    end
 
     # Livescribe exports things like apostrophes as decimal entities.
     input.force_encoding("UTF-8")
@@ -52,8 +56,8 @@ class Livescribe
   # hashtag deliveries, then remove the line and note the delivery option.
   def search_for_hashtag_delivery!
     first = @input.lines.first
-    if first =~ /^\s*#\s*(\w+)\s*$/ && @hashtag_deliveries.has_key?($1)
-      @hashtag_delivery = @hashtag_deliveries[$1]
+    if first =~ /^\s*#\s*(\w+)\s*$/ && @hashtag_deliveries.has_key?($1.upcase)
+      @hashtag_delivery = @hashtag_deliveries[$1.upcase]
       @input = @input.lines.to_a[1..-1].join
     end
   end

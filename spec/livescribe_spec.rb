@@ -51,6 +51,10 @@ describe Livescribe do
     it "sets the email delivery address, even with extra whitespace" do
       expect_hashtag(" #  MatchFound \n\nfoo", "<p>foo</p>\n", "match@example.com")
     end
+
+    it "matches are case-INsensitive" do
+      expect_hashtag("#MATCHFOUND\n\nfoo", "<p>foo</p>\n", "match@example.com")
+    end
   end
 
   describe "#remove_line_breaks!" do
