@@ -252,8 +252,9 @@ describe Livescribe do
   end
 
   describe "#insert_flickr" do
-    it "links to existing photos" do
-      expect_html("#Flickr: pLAtRM", <<-FLICKR.unindent
+
+    expected_html = <<-FLICKR.strip_heredoc
+
         <div class="photo">
           <a href="https://www.flickr.com/photos/arthaey/15600859011" title="Shell prompt while working on my Livescribe script by Arthaey Angosii, on Flickr">
             <img src="https://farm6.staticflickr.com/5607/15600859011_fc8848a221_m.jpg" alt="Shell prompt while working on my Livescribe script" width="109" height="33">
@@ -261,21 +262,35 @@ describe Livescribe do
             <span class="photo-title">Shell prompt while working on my Livescribe script</span>
           </a>
         </div>
-      FLICKR
-      )
+
+    FLICKR
+
+    it "links to an existing photo" do
+      expect_html("#Flickr: pLAtRM", expected_html)
     end
+
+    it "links to more than one existing photo"
+
+    it "links to an existing photo even with extra whitespace" do
+      expect_html(" # Flickr : pLAtRM", expected_html)
+    end
+
+    it "does not crash when the photo is not found"
+    it "does not crash when the photo is not public"
+    it "does not crash when width and height cannot be determined"
+    it "does not crash when API is not configured"
   end
 
   describe ".to_html" do
     it "does all supported conversions" do
-      input =<<-END.unindent
+      input =<<-END.strip_heredoc
         Hello * world*!
         <br>This is still the first paragraph.
         <br>This is the second paragraph, but ''Livescribe" doesn't
         <br>respect(?) paragraph indentations - alas.:)
       END
 
-      output =<<-END.unindent
+      output =<<-END.strip_heredoc
         <p>Hello <em>world</em>!
         This is still the first paragraph.</p>
         

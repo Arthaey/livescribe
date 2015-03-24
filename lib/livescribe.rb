@@ -1,6 +1,7 @@
 require "flickraw-cached"
 require "htmlentities"
 require "redcarpet"
+require_relative "Livescribe_renderer.rb"
 require_relative "string.rb"
 require_relative "settings.rb"
 
@@ -23,10 +24,8 @@ class Livescribe
     livescribe.fix_parentheses!
     livescribe.insert_flickr!
 
-    # TODO: write a custom Redcarpet renderer for Livescribe output?
-    # http://dev.af83.com/2012/02/27/howto-extend-the-redcarpet2-markdown-lib.html
-
-    renderer = Redcarpet::Render::HTML
+    # TODO: move most of this class to the custom LivescribeRenderer?
+    renderer = LivescribeRender
     redcarpet = Redcarpet::Markdown.new(renderer)
     output = redcarpet.render(livescribe.to_s)
 
@@ -108,8 +107,7 @@ class Livescribe
   end
 
   def insert_flickr!
-    flickr_regex = /#Flickr: (\w+)/
-    @input.scan(flickr_regex).each do |matches|
+    @input.scan(/#\s*Flickr\s*:\s*(\w+)/).each do |matches|
       short_id = matches.first
       begin
         photo = flickr.photos.getInfo(:photo_id => short_id)
@@ -126,7 +124,8 @@ class Livescribe
         height =  small_photo["height"]
         source = small_photo["source"]
 
-        @input.sub!(/#Flickr: #{short_id}/, <<-FLICKR.unindent
+        @input.sub!(/#\s*Flickr\s*:\s*#{short_id}/, <<-FLICKR.strip_heredoc
+
           <div class="photo">
             <a href="#{url}" title="#{title} by #{user_name}, on Flickr">
               <img src="#{source}" alt="#{title}" width="#{width}" height="#{height}">
@@ -134,6 +133,7 @@ class Livescribe
               <span class="photo-title">#{title}</span>
             </a>
           </div>
+
         FLICKR
         )
       rescue FlickRaw::FailedResponse => e

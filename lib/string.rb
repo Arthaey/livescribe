@@ -1,9 +1,7 @@
-# From http://stackoverflow.com/a/5638187/1867798
+# From http://stackoverflow.com/a/9654275/1867798
 class String
-  # Strip leading whitespace from each line that is the same as the 
-  # amount of whitespace on the first line of the string.
-  # Leaves _additional_ indentation on later lines intact.
-  def unindent
-    gsub(/^#{self[/\A\s*/]}/, '')
+  def strip_heredoc
+    indent = scan(/^[ \t]*(?=\S)/).min.size ||  0
+    gsub(/^[ \t]{#{indent}}/, '')
   end
 end
