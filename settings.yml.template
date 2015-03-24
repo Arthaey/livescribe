@@ -1,6 +1,12 @@
+# Default email addresses
 from_email: "you@example.com"
 to_email: "your.account@blogger.com"
 cc_email: "cc@example.com"
+
+# Override default email addresses
+hashtag_deliveries:
+  ToFoo: "foo@example.com"
+  BarStuff: "bar@example.com"
 
 # Get your Flickr API key at https://www.flickr.com/services/apps/create/apply/
 flickr_api_key: "abcdef1234567890abcdef1234567890"
