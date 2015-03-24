@@ -1,45 +1,61 @@
 require "flickraw-cached"
 require "htmlentities"
 require "redcarpet"
-require_relative "Livescribe_renderer.rb"
+require_relative "livescribe_renderer.rb"
 require_relative "string.rb"
 require_relative "settings.rb"
 
+# TODO: move most of this class to the custom LivescribeRenderer?
 class Livescribe
+  attr_reader :hashtag_delivery
 
   FlickRaw.api_key = Settings["flickr_api_key"]
   FlickRaw.shared_secret = Settings["flickr_shared_secret"]
 
   @@entities = HTMLEntities.new
+  @@renderer = Redcarpet::Markdown.new(LivescribeRenderer)
 
-  def self.to_html!(input)
-    livescribe = Livescribe.new(input)
-    livescribe.remove_line_breaks!
-    livescribe.guess_new_paragraphs!
-    livescribe.remove_whitespace_around_asterisks!
-    livescribe.fix_quotation_marks!
-    livescribe.fix_dashes!
-    livescribe.wrap_smileys_in_tt!
-    livescribe.question_superscript!
-    livescribe.fix_parentheses!
-    livescribe.insert_flickr!
-
-    # TODO: move most of this class to the custom LivescribeRenderer?
-    renderer = LivescribeRender
-    redcarpet = Redcarpet::Markdown.new(renderer)
-    output = redcarpet.render(livescribe.to_s)
-
-    @@entities.decode(output)
+  def self.to_html!(input, hashtag_deliveries = {})
+    Livescribe.new(input, hashtag_deliveries).to_html!
   end
 
-  def initialize(input)
+  def initialize(input, hashtag_deliveries = {})
+    @hashtag_deliveries = hashtag_deliveries
+    @hashtag_delivery = nil
+
     # Livescribe exports things like apostrophes as decimal entities.
     input.force_encoding("UTF-8")
     @input = @@entities.decode(input)
   end
 
+  def to_html!
+    search_for_hashtag_delivery!
+    remove_line_breaks!
+    guess_new_paragraphs!
+    remove_whitespace_around_asterisks!
+    fix_quotation_marks!
+    fix_dashes!
+    wrap_smileys_in_tt!
+    question_superscript!
+    fix_parentheses!
+    insert_flickr!
+
+    output = @@renderer.render(to_s)
+    @@entities.decode(output)
+  end
+
   def to_s
     @input
+  end
+
+  # If the first line of input is a hashtag that matches the settings for
+  # hashtag deliveries, then remove the line and note the delivery option.
+  def search_for_hashtag_delivery!
+    first = @input.lines.first
+    if first =~ /^\s*#\s*(\w+)\s*$/ && @hashtag_deliveries.has_key?($1)
+      @hashtag_delivery = @hashtag_deliveries[$1]
+      @input = @input.lines.to_a[1..-1].join
+    end
   end
 
   # Livescribe breaks on every line manually.

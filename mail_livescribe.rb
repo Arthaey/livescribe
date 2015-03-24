@@ -24,11 +24,12 @@ if options[:email_input]
   input = Mail.new(input).body.decoded
 end
 
-output = Livescribe.to_html!(input)
+livescribe = Livescribe.new(input, Settings.hashtag_deliveries)
+output = livescribe.to_html!
 puts output if options[:print]
 
 from_email = options[:from] || Settings.from_email
-to_email = options[:to] || Settings.to_email
+to_email = options[:to] || livescribe.hashtag_delivery || Settings.to_email
 cc_email = options[:cc] || Settings["cc_email"]
 
 mail = Mail.new do

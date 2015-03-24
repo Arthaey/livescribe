@@ -25,6 +25,34 @@ describe Livescribe do
     end
   end
 
+  describe "#search_for_hashtag_delivery!" do
+    def expect_hashtag(input, output, hashtag)
+      hashtags = {
+        "MatchFound" => "match@example.com",
+        "IgnoreMe" => "ignored@example.com",
+      }
+      livescribe = Livescribe.new(input, hashtags)
+      expect(livescribe.to_html!).to eq(output)
+      expect(livescribe.hashtag_delivery).to eq(hashtag)
+    end
+
+    it "does nothing if the first line is not a hashtag" do
+      expect_hashtag("#Heading\n\nfoo", "<h1>Heading</h1>\n\n<p>foo</p>\n", nil)
+    end
+
+    it "does nothing if hashtag does not have a match" do
+      expect_hashtag("#NoMatch\n\nfoo", "<h1>NoMatch</h1>\n\n<p>foo</p>\n", nil)
+    end
+
+    it "sets the email delivery address if a match is found" do
+      expect_hashtag("#MatchFound\n\nfoo", "<p>foo</p>\n", "match@example.com")
+    end
+
+    it "sets the email delivery address, even with extra whitespace" do
+      expect_hashtag(" #  MatchFound \n\nfoo", "<p>foo</p>\n", "match@example.com")
+    end
+  end
+
   describe "#remove_line_breaks!" do
     it "removes <br> elements that start a line" do
       expect_html("foo\n<br>bar", "<p>foo\nbar</p>\n")
@@ -271,7 +299,7 @@ describe Livescribe do
 
     it "links to more than one existing photo"
 
-    it "links to an existing photo even with extra whitespace" do
+    it "links to an existing photo, even with extra whitespace" do
       expect_html(" # Flickr : pLAtRM", expected_html)
     end
 
