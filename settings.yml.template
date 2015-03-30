@@ -4,9 +4,11 @@ to_email: "your.account@blogger.com"
 cc_email: "cc@example.com"
 
 # Override default email addresses (matches are case-INsensitive)
-hashtag_deliveries:
-  ToFoo: "foo@example.com"
-  BarStuff: "bar@example.com"
+hashtag_overrides:
+  ToFoo:
+    to_email: "foo@example.com"
+  BarStuff:
+    to_email: "bar@example.com"
 
 # Path to log file
 log: "/path/to/livescribe.log"

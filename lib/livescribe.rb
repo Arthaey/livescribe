@@ -7,7 +7,7 @@ require_relative "settings.rb"
 
 # TODO: move most of this class to the custom LivescribeRenderer?
 class Livescribe
-  attr_reader :hashtag_delivery
+  attr_reader :to_email, :cc_email, :from_email
 
   FlickRaw.api_key = Settings["flickr_api_key"]
   FlickRaw.shared_secret = Settings["flickr_shared_secret"]
@@ -15,16 +15,20 @@ class Livescribe
   @@entities = HTMLEntities.new
   @@renderer = Redcarpet::Markdown.new(LivescribeRenderer)
 
-  def self.to_html!(input, hashtag_deliveries = {})
-    Livescribe.new(input, hashtag_deliveries).to_html!
+  def self.to_html!(input, hashtag_overrides = {})
+    Livescribe.new(input, hashtag_overrides).to_html!
   end
 
-  def initialize(input, hashtag_deliveries = {})
-    # Normalize hashtag deliveries keys, for case-insensitive searching.
-    @hashtag_delivery = nil
-    @hashtag_deliveries = {}
-    hashtag_deliveries.each_pair do |tag,email|
-      @hashtag_deliveries[tag.upcase] = email
+  def initialize(input, hashtag_overrides = {})
+    # By default, take email settings from the global settings.yml file.
+    @from_email = nil
+    @to_email = nil
+    @cc_email = nil
+
+    # Normalize keys, for case-insensitive searching.
+    @hashtag_overrides = {}
+    hashtag_overrides.each_pair do |tag, overrides|
+      @hashtag_overrides[tag.upcase] = overrides
     end
 
     # Livescribe exports things like apostrophes as decimal entities.
@@ -33,7 +37,7 @@ class Livescribe
   end
 
   def to_html!
-    search_for_hashtag_delivery!
+    search_for_hashtag_overrides!
     remove_line_breaks!
     guess_new_paragraphs!
     remove_whitespace_around_asterisks!
@@ -53,11 +57,13 @@ class Livescribe
   end
 
   # If the first line of input is a hashtag that matches the settings for
-  # hashtag deliveries, then remove the line and note the delivery option.
-  def search_for_hashtag_delivery!
+  # hashtag overrides, then remove the line and note the settings overrides.
+  def search_for_hashtag_overrides!
     first = @input.lines.first
-    if first =~ /^\s*#\s*(\w+)\s*$/ && @hashtag_deliveries.has_key?($1.upcase)
-      @hashtag_delivery = @hashtag_deliveries[$1.upcase]
+    if first =~ /^\s*#\s*(\w+)\s*$/ && @hashtag_overrides.has_key?($1.upcase)
+      @hashtag_overrides[$1.upcase].each_pair do |key, val|
+        instance_variable_set("@#{key}", val)
+      end
       @input = @input.lines.to_a[1..-1].join
     end
   end

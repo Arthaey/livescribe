@@ -19,7 +19,7 @@ describe "config file options" do
   it "from_email default value"
   it "to_email default value"
   it "cc_email default value"
-  it "hashtag_deliveries overrides to_email"
+  it "hashtag_overrides overrides settings"
 end
 
 describe "command-line values override config file" do

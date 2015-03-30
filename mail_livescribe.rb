@@ -33,14 +33,14 @@ if options[:email_input]
 end
 logger.debug("Input:\n#{input}")
 
-livescribe = Livescribe.new(input, Settings.hashtag_deliveries)
+livescribe = Livescribe.new(input, Settings.hashtag_overrides)
 output = livescribe.to_html!
 puts output if options[:print]
 logger.debug("Output:\n#{output}")
 
-from_email = options[:from] || Settings.from_email
-to_email = options[:to] || livescribe.hashtag_delivery || Settings.to_email
-cc_email = options[:cc] || Settings["cc_email"]
+from_email = options[:from] || livescribe.from_email || Settings.from_email
+to_email = options[:to] || livescribe.to_email || Settings.to_email
+cc_email = options[:cc] || livescribe.cc_email || Settings.cc_email
 
 mail = Mail.new do
   from from_email

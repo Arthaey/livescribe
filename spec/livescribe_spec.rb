@@ -25,15 +25,19 @@ describe Livescribe do
     end
   end
 
-  describe "#search_for_hashtag_delivery!" do
-    def expect_hashtag(input, output, hashtag)
+  describe "#search_for_hashtag_overrides!" do
+    def expect_hashtag(input, output, expected)
       hashtags = {
-        "MatchFound" => "match@example.com",
-        "IgnoreMe" => "ignored@example.com",
+        "MatchFound" => {
+          "to_email" => "match@example.com",
+        },
+        "IgnoreMe" => {
+          "to_email" => "ignored@example.com",
+        },
       }
       livescribe = Livescribe.new(input, hashtags)
       expect(livescribe.to_html!).to eq(output)
-      expect(livescribe.hashtag_delivery).to eq(hashtag)
+      expect(livescribe.to_email).to eq(expected)
     end
 
     it "does nothing if the first line is not a hashtag" do
