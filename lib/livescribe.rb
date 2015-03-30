@@ -7,7 +7,7 @@ require_relative "settings.rb"
 
 # TODO: move most of this class to the custom LivescribeRenderer?
 class Livescribe
-  attr_reader :to_email, :cc_email, :from_email
+  attr_reader :to_email, :cc_email, :from_email, :allow_lists
 
   FlickRaw.api_key = Settings["flickr_api_key"]
   FlickRaw.shared_secret = Settings["flickr_shared_secret"]
@@ -24,6 +24,11 @@ class Livescribe
     @from_email = nil
     @to_email = nil
     @cc_email = nil
+
+    # By default, treat input as full-fledged Markdown/HTML, which can contain
+    # lists. However, some text (eg, prose) should treat all dashes as true
+    # punctuation, not a list.
+    @allow_lists = true
 
     # Normalize keys, for case-insensitive searching.
     @hashtag_overrides = {}
@@ -93,12 +98,15 @@ class Livescribe
     return @input unless @input.include?("-")
 
     is_list_item = false
-    list_item_regex = /^\s*-\s*/m
-    list_placeholder = "LIST_ITEM"
+    if @allow_lists
+      # treat leading hyphens as list item bullets
+      list_item_regex = /^\s*-\s*/m
+      list_placeholder = "LIST_ITEM"
 
-    if @input =~ list_item_regex
-      is_list_item = true
-      @input.gsub!(list_item_regex, list_placeholder)
+      if @input =~ list_item_regex
+        is_list_item = true
+        @input.gsub!(list_item_regex, list_placeholder)
+      end
     end
 
     # find all obvious em-dashes (surrounded by spaces)
@@ -111,8 +119,19 @@ class Livescribe
     # find somewhat-ambiguous em-dashes (a pair of "detached hyphens")
     @input.gsub!(/\s+-(.+?)-\s+/, " — \\1 — ")
 
-    if is_list_item
-      @input.gsub!(list_placeholder, " - ")
+    if not @allow_lists
+      # treat leading hyphens as leading em-dashes (eg, in Spanish dialog)
+      @input.gsub!(/^\s*[-—]\s*/, "—")
+
+      # treat "detached hyphens" as full em-dashes
+      @input.gsub!(/(\S+?)-\s+(\S+?)/, "\\1 — \\2")
+      @input.gsub!(/(\S+?)\s+-(\S+?)/, "\\1 — \\2")
+    end
+
+    if @allow_lists
+      if is_list_item
+        @input.gsub!(list_placeholder, " - ")
+      end
     end
   end
 

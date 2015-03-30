@@ -161,6 +161,54 @@ describe Livescribe do
     end
   end
 
+  describe "#fix_dashes! with no lists allowed" do
+    def expect_html(input, output)
+      overrides = {
+        "NoLists" => { "allow_lists" => false }
+      }
+      livescribe = Livescribe.new("#NoLists\n#{input}", overrides)
+      expect(livescribe.to_html!).to eq(output)
+    end
+
+    it "fixes even 'unclear' em-dashes" do
+      expect_html("foo- bar", "<p>foo — bar</p>\n")
+      expect_html("foo -bar", "<p>foo — bar</p>\n")
+    end
+
+    it "fixes obvious em-dashes" do
+      expect_html("foo - bar", "<p>foo — bar</p>\n")
+      expect_html("foo - bar - qux", "<p>foo — bar — qux</p>\n")
+    end
+
+    it "fixes somewhat ambiguous em-dashes" do
+      expect_html("foo - bar- qux", "<p>foo — bar — qux</p>\n")
+      expect_html("foo -bar - qux", "<p>foo — bar — qux</p>\n")
+      expect_html("foo -bar- qux", "<p>foo — bar — qux</p>\n")
+    end
+
+    it "ignores possible list items that contain no other dashes" do
+      expect_html("- foo", "<p>—foo</p>\n")
+      expect_html("- foo\n- bar", "<p>—foo — bar</p>\n")
+      expect_html(" - foo\n - bar", "<p>—foo — bar</p>\n")
+    end
+
+    it "ignores possible list items with em-dashes within them" do
+      expect_html("- foo - bar", "<p>—foo — bar</p>\n")
+      expect_html("-foo - bar", "<p>—foo — bar</p>\n")
+    end
+
+    it "ignores possible list items with hyphens within them" do
+      expect_html("-foo-bar", "<p>—foo-bar</p>\n")
+    end
+
+    it "ignores possible list items while ignoring ambiguous dashes" do
+      expect_html("- foo- bar", "<p>—foo — bar</p>\n")
+      expect_html("- foo -bar", "<p>—foo — bar</p>\n")
+      expect_html("-foo- bar", "<p>—foo — bar</p>\n")
+      expect_html("-foo -bar", "<p>—foo — bar</p>\n")
+    end
+  end
+
   describe "#wrap_smileys_in_tt!" do
     context "when there are leading spaces" do
       context "and it gets the eyes right" do
