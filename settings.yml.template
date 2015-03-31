@@ -10,6 +10,7 @@ hashtag_overrides:
   BarStuff:
     to_email: "bar@example.com"
     allow_lists: false
+    url: "http://example.com/url/to/POST/to"
 
 # Path to log file
 log: "/path/to/livescribe.log"

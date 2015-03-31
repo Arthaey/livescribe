@@ -7,7 +7,7 @@ require_relative "settings.rb"
 
 # TODO: move most of this class to the custom LivescribeRenderer?
 class Livescribe
-  attr_reader :to_email, :cc_email, :from_email, :allow_lists
+  attr_reader :allow_lists, :cc_email, :from_email, :url, :to_email
 
   FlickRaw.api_key = Settings["flickr_api_key"]
   FlickRaw.shared_secret = Settings["flickr_shared_secret"]
@@ -24,6 +24,7 @@ class Livescribe
     @from_email = nil
     @to_email = nil
     @cc_email = nil
+    @url = nil
 
     # By default, treat input as full-fledged Markdown/HTML, which can contain
     # lists. However, some text (eg, prose) should treat all dashes as true
