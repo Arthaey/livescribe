@@ -32,7 +32,9 @@ logger.info("Options: #{options.inspect}")
 
 input = $stdin.read
 if options[:email_input]
-  input = Mail.new(input).body.decoded
+  mail = Mail.new(input)
+  body = (mail.text_part ? mail.text_part.body : mail.body)
+  input = body.decoded
 end
 logger.debug("Input:\n#{input}")
 
