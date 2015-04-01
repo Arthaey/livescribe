@@ -9,4 +9,10 @@ class LivescribeRenderer < Redcarpet::Render::HTML
     "\n#{raw_html}"
   end
 
+  # Remove superfluous newlines *within* a paragraph.
+  def paragraph(text)
+    text.gsub!(/\n/, " ")
+    "\n<p>#{text}</p>\n"
+  end
+
 end
