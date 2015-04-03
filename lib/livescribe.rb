@@ -93,7 +93,7 @@ class Livescribe
   # And Livescribe does not understand angle quotation marks at all.
   def fix_quotation_marks!
     @input.gsub!(/''/, '"')
-    @input.gsub!(/←\s*\b(.+?)\b\s*77(\b|$)/, "«\\1»")
+    @input.gsub!(/←\s*(.+?)\s*(?<![0-9])77(?![0-9])/m, "«\\1»")
   end
 
   # Livescribe turns em-dashes into hyphens.
