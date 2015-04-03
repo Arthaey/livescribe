@@ -46,6 +46,7 @@ class Livescribe
     search_for_hashtag_overrides!
     remove_line_breaks!
     guess_new_paragraphs!
+    remove_extra_whitespace!
     remove_whitespace_around_asterisks!
     fix_quotation_marks!
     fix_dashes!
@@ -82,6 +83,10 @@ class Livescribe
   # Livescribe doesn't preserve indented lines as new paragraphs.
   def guess_new_paragraphs!
     @input.gsub!(/\.\s*$\n^([[:punct:][:upper:]])/m, ".\n\n\\1")
+  end
+
+  def remove_extra_whitespace!
+    @input.gsub!(/ +/, " ")
   end
 
   # Livescribe tends to surround asterisks with whitespace.
