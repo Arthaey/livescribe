@@ -93,6 +93,12 @@ describe Livescribe do
     end
   end
 
+  describe "#remove_extra_whitespace!" do
+    it "removes consecutive whitespace" do
+      expect_html("foo   bar", "\n<p>foo bar</p>\n")
+    end
+  end
+
   describe "#remove_whitespace_around_asterisks!" do
       it "removes spaces after the first asterisk" do
         expect_html("foo * bar* qux", "\n<p>foo <em>bar</em> qux</p>\n")
@@ -384,7 +390,7 @@ describe Livescribe do
       input =<<-END.strip_heredoc
         Hello * world*!
         <br>This is still the ← first 77 paragraph.
-        <br>This is the second paragraph, but ''Livescribe" doesn't
+        <br>This is the   second paragraph, but ''Livescribe" doesn't
         <br>respect(?) paragraph indentations - alas.:)
       END
 
