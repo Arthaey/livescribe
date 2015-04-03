@@ -90,8 +90,10 @@ class Livescribe
   end
 
   # Livescribe sometimes thinks a quotation mark is two apostrophes.
+  # And Livescribe does not understand angle quotation marks at all.
   def fix_quotation_marks!
     @input.gsub!(/''/, '"')
+    @input.gsub!(/←\s*\b(.+?)\b\s*77(\b|$)/, "«\\1»")
   end
 
   # Livescribe turns em-dashes into hyphens.

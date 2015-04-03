@@ -119,6 +119,18 @@ describe Livescribe do
     it "does nothing to single apostrophes" do
       expect_html("'foo'", "\n<p>'foo'</p>\n")
     end
+
+    it "fixes misinterpreted angle quotation marks" do
+        expect_html("← foo 77", "\n<p>«foo»</p>\n")
+    end
+
+    it "ignores the number 77 when not a quotation mark" do
+        expect_html("foo 77", "\n<p>foo 77</p>\n")
+    end
+
+    it "ignores a right arrow when not a quotation mark" do
+        expect_html("← foo 777", "\n<p>← foo 777</p>\n")
+    end
   end
 
   describe "#fix_dashes!" do
@@ -369,14 +381,14 @@ describe Livescribe do
     it "does all supported conversions" do
       input =<<-END.strip_heredoc
         Hello * world*!
-        <br>This is still the first paragraph.
+        <br>This is still the ← first 77 paragraph.
         <br>This is the second paragraph, but ''Livescribe" doesn't
         <br>respect(?) paragraph indentations - alas.:)
       END
 
       output =<<-END.strip_heredoc
 
-        <p>Hello <em>world</em>! This is still the first paragraph.</p>
+        <p>Hello <em>world</em>! This is still the «first» paragraph.</p>
         
         <p>This is the second paragraph, but "Livescribe" doesn't respect<sup class='uncertain'>(?)</sup> paragraph indentations — alas. <tt>:)</tt> </p>
       END
