@@ -127,9 +127,16 @@ describe Livescribe do
     end
 
     it "fixes misinterpreted angle quotation marks" do
-        expect_html("←foo77", "\n<p>«foo»</p>\n")
-        expect_html("← foo 77", "\n<p>«foo»</p>\n")
-        expect_html("← foo\nbar 77", "\n<p>«foo bar»</p>\n")
+      beginnings = [ "<<", "K", "←" ]
+      endings = [ ">>", "77" ]
+
+      beginnings.each do |beginning|
+        endings.each do |ending|
+          expect_html("#{beginning}foo#{ending}", "\n<p>«foo»</p>\n")
+          expect_html("#{beginning} foo #{ending}", "\n<p>«foo»</p>\n")
+          expect_html("#{beginning} foo\nbar #{ending}", "\n<p>«foo bar»</p>\n")
+        end
+      end
     end
 
     it "ignores the number 77 when not a quotation mark" do
