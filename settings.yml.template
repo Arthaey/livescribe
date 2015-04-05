@@ -10,6 +10,7 @@ hashtag_overrides:
   BarStuff:
     to_email: "bar@example.com"
     allow_lists: false
+    aggressive_quotation_dash: true
     url: "http://example.com/url/to/POST/to"
 
 # Path to log file

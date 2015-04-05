@@ -7,7 +7,8 @@ require_relative "settings.rb"
 
 # TODO: move most of this class to the custom LivescribeRenderer?
 class Livescribe
-  attr_reader :allow_lists, :cc_email, :from_email, :url, :to_email
+  attr_reader :aggressive_quotation_dash, :allow_lists, :cc_email,
+      :from_email, :url, :to_email
 
   FlickRaw.api_key = Settings["flickr_api_key"]
   FlickRaw.shared_secret = Settings["flickr_shared_secret"]
@@ -30,6 +31,9 @@ class Livescribe
     # lists. However, some text (eg, prose) should treat all dashes as true
     # punctuation, not a list.
     @allow_lists = true
+
+    # By default, assume dashes are em-dashes, not quotation dashes.
+    @aggressive_quotation_dash = false
 
     # Normalize keys, for case-insensitive searching.
     @hashtag_overrides = {}
@@ -134,6 +138,10 @@ class Livescribe
       # treat "detached hyphens" as full em-dashes
       @input.gsub!(/(\S+?)-\s+(\S+?)/, "\\1 — \\2")
       @input.gsub!(/(\S+?)\s+-(\S+?)/, "\\1 — \\2")
+    end
+
+    if @aggressive_quotation_dash
+      @input.gsub!(/ — /, " —")
     end
 
     if @allow_lists
