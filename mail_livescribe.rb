@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 require "logger"
 require "mail"
 require "net/http"
