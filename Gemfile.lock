@@ -9,7 +9,7 @@ GEM
     mail (2.6.1)
       mime-types (>= 1.16, < 3)
     mime-types (2.4.3)
-    redcarpet (3.2.0)
+    redcarpet (3.1.2)
     rspec (3.1.0)
       rspec-core (~> 3.1.0)
       rspec-expectations (~> 3.1.0)
@@ -28,9 +28,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  flickraw-cached
-  htmlentities
-  mail
-  redcarpet
-  rspec
-  settingslogic
+  flickraw-cached (= 20120701)
+  htmlentities (= 4.3.2)
+  mail (= 2.6.1)
+  redcarpet (= 3.1.2)
+  rspec (= 3.1.0)
+  settingslogic (= 2.0.9)
