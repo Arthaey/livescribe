@@ -30,6 +30,7 @@ OptionParser.new do |opts|
   opts.on("-u", "--url URL", "Url to POST data to")           { |x| options[:url]    = x }
 end.parse!
 logger.info("Options: #{options.inspect}")
+logger.info("Settings: #{Settings.inspect}")
 
 input = $stdin.read
 if options[:email_input]
@@ -39,12 +40,12 @@ if options[:email_input]
 end
 logger.debug("Input:\n#{input}")
 
-livescribe = Livescribe.new(input, Settings.hashtag_overrides)
+livescribe = Livescribe.new(input, Settings["hashtag_overrides"] || {})
 output = livescribe.to_html!
 puts output if options[:print]
 logger.debug("Output:\n#{output}")
 
-url = options[:url] || livescribe.url
+url = options[:url] || Settings["url"] || livescribe.url
 if url
   # POST converted output to a url
   debug_msg = "Output POST'd to #{url}."
