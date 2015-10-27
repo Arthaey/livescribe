@@ -25,6 +25,8 @@ Usage: mail_livescribe.rb [options]
 
 See [settings.yml.template](https://github.com/Arthaey/livescribe/blob/master/settings.yml.template) for an example of the settings that are available.
 
+If the file `dictionary.yml` exists, words will be searched and replaced based on it.
+
 ## POST to a url
 
 If using the "POST to a url" option, it can expect `snippet` to contain the HTML output and `is_html` to be `1`.

@@ -6,12 +6,13 @@ def expect_html(input, output)
 end
 
 # TODO: test when there's more than one of each formatting thing in the input.
+# TODO: test dictionary search/replace functionality.
 describe Livescribe do
   describe "#initialize" do
     it "uses input verbatim when it contains no entities" do
       expect_html("foo", "\n<p>foo</p>\n")
     end
-    
+
     it "decodes hexidecimal entities" do
       expect_html("foo&#39;s", "\n<p>foo's</p>\n")
     end
@@ -35,7 +36,7 @@ describe Livescribe do
           "to_email" => "ignored@example.com",
         },
       }
-      livescribe = Livescribe.new(input, hashtags)
+      livescribe = Livescribe.new(input, {}, hashtags)
       expect(livescribe.to_html!).to eq(output)
       expect(livescribe.to_email).to eq(expected)
     end
@@ -193,7 +194,7 @@ describe Livescribe do
       overrides = {
         "NoLists" => { "allow_lists" => false }
       }
-      livescribe = Livescribe.new("#NoLists\n#{input}", overrides)
+      livescribe = Livescribe.new("#NoLists\n#{input}", {}, overrides)
       expect(livescribe.to_html!).to eq(output)
     end
 
@@ -245,7 +246,7 @@ describe Livescribe do
           "aggressive_quotation_dash" => true,
         }
       }
-      livescribe = Livescribe.new("#NoLists\n#{input}", overrides)
+      livescribe = Livescribe.new("#NoLists\n#{input}", {}, overrides)
       expect(livescribe.to_html!).to eq(output)
     end
 

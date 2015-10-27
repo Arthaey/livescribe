@@ -4,6 +4,7 @@ require "mail"
 require "net/http"
 require "optparse"
 require "uri"
+require "yaml"
 require_relative "lib/livescribe.rb"
 require_relative "lib/settings.rb"
 
@@ -40,7 +41,7 @@ if options[:email_input]
 end
 logger.debug("Input:\n#{input}")
 
-livescribe = Livescribe.new(input, Settings["hashtag_overrides"] || {})
+livescribe = Livescribe.new(input, Settings.dictionary, Settings["hashtag_overrides"] || {})
 output = livescribe.to_html!
 puts output if options[:print]
 logger.debug("Output:\n#{output}")

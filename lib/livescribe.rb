@@ -16,11 +16,13 @@ class Livescribe
   @@entities = HTMLEntities.new
   @@renderer = Redcarpet::Markdown.new(LivescribeRenderer)
 
-  def self.to_html!(input, hashtag_overrides = {})
-    Livescribe.new(input, hashtag_overrides).to_html!
+  def self.to_html!(input, dictionary = {}, hashtag_overrides = {})
+    Livescribe.new(input, dictionary, hashtag_overrides).to_html!
   end
 
-  def initialize(input, hashtag_overrides = {})
+  def initialize(input, dictionary = {}, hashtag_overrides = {})
+    @dictionary = dictionary
+
     # By default, take email settings from the global settings.yml file.
     @from_email = nil
     @to_email = nil
@@ -57,6 +59,7 @@ class Livescribe
     wrap_smileys_in_tt!
     question_superscript!
     fix_parentheses!
+    dictionary_fixes!
     insert_flickr!
 
     output = @@renderer.render(to_s)
@@ -165,6 +168,13 @@ class Livescribe
   # Livescribe sometimes turns leading parentheses into C's.
   def fix_parentheses!
     @input.gsub!(/C([^)]+?)\)/, "(\\1)")
+  end
+
+  # Livescribe sometimes consistent mis-parses the user's handwriting.
+  def dictionary_fixes!
+    @dictionary.each_pair do |search, replace|
+      @input.gsub!(/\b#{search}\b/, replace)
+    end
   end
 
   def insert_flickr!
