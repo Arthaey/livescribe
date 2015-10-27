@@ -28,3 +28,5 @@ See [settings.yml.template](https://github.com/Arthaey/livescribe/blob/master/se
 ## POST to a url
 
 If using the "POST to a url" option, it can expect `snippet` to contain the HTML output and `is_html` to be `1`.
+
+There can only be one occurrence of "CONTINUE HERE" in the doc. In particular, it cannot appear in both a table of contents and the document body itself.
