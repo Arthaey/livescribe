@@ -8,6 +8,7 @@ Note: use at your own risk. I'm the only user of this script so far, so it's not
 
 * `git clone`
 * `bundle install`
+* copy `.forward` to the home directory of the server that will receive emails
 
 ## Usage
 

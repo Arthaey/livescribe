@@ -1,0 +1,1 @@
+| "export GEM_HOME=/path/to/gems && /path/to/ruby /path/to/mail_livescribe.rb --email-input"
