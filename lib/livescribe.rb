@@ -63,7 +63,7 @@ class Livescribe
     insert_flickr!
 
     output = @@renderer.render(to_s)
-    @@entities.decode(output)
+    @@entities.decode(output).gsub("&", "&amp;")
   end
 
   def to_s

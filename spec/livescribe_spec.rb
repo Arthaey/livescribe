@@ -24,6 +24,10 @@ describe Livescribe do
     it "decodes named entities" do
       expect_html("foo&apos;s", "\n<p>foo's</p>\n")
     end
+
+    it "encodes literal ampersands" do
+      expect_html("foo&bar", "\n<p>foo&amp;bar</p>\n")
+    end
   end
 
   describe "#search_for_hashtag_overrides!" do
@@ -450,7 +454,7 @@ describe Livescribe do
       input =<<-END.strip_heredoc
         Hello * world*!
         <br>This is still the ← first 77 paragraph.
-        <br>This is the   second paragraph, but ''Livescribe" doesn't
+        <br>This is the   second paragraph &c, but ''Livescribe" doesn't
         <br>respect(?) paragraph indentations - alas.:)
       END
 
@@ -458,7 +462,7 @@ describe Livescribe do
 
         <p>Hello <em>world</em>! This is still the «first» paragraph.</p>
         
-        <p>This is the second paragraph, but "Livescribe" doesn't respect<sup class='uncertain'>(?)</sup> paragraph indentations — alas. <tt>:)</tt> </p>
+        <p>This is the second paragraph &amp;c, but "Livescribe" doesn't respect<sup class='uncertain'>(?)</sup> paragraph indentations — alas. <tt>:)</tt> </p>
       END
 
       expect_html(input, output)
