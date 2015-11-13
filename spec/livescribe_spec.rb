@@ -102,6 +102,15 @@ describe Livescribe do
     it "removes consecutive whitespace" do
       expect_html("foo   bar", "\n<p>foo bar</p>\n")
     end
+
+    it "removes whitespace before certain punctuation" do
+      expect_html("foo . bar", "\n<p>foo. bar</p>\n")
+      expect_html("foo , bar", "\n<p>foo, bar</p>\n")
+      expect_html("foo ; bar", "\n<p>foo; bar</p>\n")
+      expect_html("foo : bar", "\n<p>foo: bar</p>\n")
+      expect_html("foo ? bar", "\n<p>foo? bar</p>\n")
+      expect_html("foo ! bar", "\n<p>foo! bar</p>\n")
+    end
   end
 
   describe "#remove_whitespace_around_asterisks!" do
@@ -453,7 +462,7 @@ describe Livescribe do
     it "does all supported conversions" do
       input =<<-END.strip_heredoc
         Hello * world*!
-        <br>This is still the ← first 77 paragraph.
+        <br>This is still the ← first 77 paragraph .
         <br>This is the   second paragraph &c, but ''Livescribe" doesn't
         <br>respect(?) paragraph indentations - alas.:)
       END

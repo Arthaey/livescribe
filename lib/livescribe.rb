@@ -94,6 +94,7 @@ class Livescribe
 
   def remove_extra_whitespace!
     @input.gsub!(/ +/, " ")
+    @input.gsub!(/ +([.,;:?!])/, "\\1")
   end
 
   # Livescribe tends to surround asterisks with whitespace.
