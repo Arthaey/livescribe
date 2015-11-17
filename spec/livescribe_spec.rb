@@ -306,41 +306,41 @@ describe Livescribe do
     context "when there are leading spaces" do
       context "and it gets the eyes right" do
         it "wraps smileys like :)" do
-          expect_html("foo :)", "\n<p>foo <tt>:)</tt> </p>\n")
+          expect_html("foo :)", "\n<p>foo <tt>:)</tt></p>\n")
         end
 
         it "wraps smileys like :(" do
-          expect_html("foo :(", "\n<p>foo <tt>:(</tt> </p>\n")
+          expect_html("foo :(", "\n<p>foo <tt>:(</tt></p>\n")
         end
 
         it "wraps smileys like :P" do
-          expect_html("foo :P", "\n<p>foo <tt>:P</tt> </p>\n")
+          expect_html("foo :P", "\n<p>foo <tt>:P</tt></p>\n")
         end
 
         it "wraps smileys like ;)" do
-          expect_html("foo ;)", "\n<p>foo <tt>;)</tt> </p>\n")
+          expect_html("foo ;)", "\n<p>foo <tt>;)</tt></p>\n")
         end
 
         it "wraps smileys like ;(" do
-          expect_html("foo ;(", "\n<p>foo <tt>;(</tt> </p>\n")
+          expect_html("foo ;(", "\n<p>foo <tt>;(</tt></p>\n")
         end
 
         it "wraps smileys like ;P" do
-          expect_html("foo ;P", "\n<p>foo <tt>;P</tt> </p>\n")
+          expect_html("foo ;P", "\n<p>foo <tt>;P</tt></p>\n")
         end
       end
 
       context "and it thinks the eyes are quotation marks" do
         it "wraps smileys like \")" do
-          expect_html("foo \")", "\n<p>foo <tt>:)</tt> </p>\n")
+          expect_html("foo \")", "\n<p>foo <tt>:)</tt></p>\n")
         end
 
         it "wraps smileys like \"(" do
-          expect_html("foo \"(", "\n<p>foo <tt>:(</tt> </p>\n")
+          expect_html("foo \"(", "\n<p>foo <tt>:(</tt></p>\n")
         end
 
         it "wraps smileys like \"P" do
-          expect_html("foo \"P", "\n<p>foo <tt>:P</tt> </p>\n")
+          expect_html("foo \"P", "\n<p>foo <tt>:P</tt></p>\n")
         end
       end
     end
@@ -348,41 +348,41 @@ describe Livescribe do
     context "when there are NOT leading spaces" do
       context "and it gets the eyes right" do
         it "wraps smileys like :)" do
-          expect_html("foo:)", "\n<p>foo <tt>:)</tt> </p>\n")
+          expect_html("foo:)", "\n<p>foo <tt>:)</tt></p>\n")
         end
 
         it "wraps smileys like :(" do
-          expect_html("foo:(", "\n<p>foo <tt>:(</tt> </p>\n")
+          expect_html("foo:(", "\n<p>foo <tt>:(</tt></p>\n")
         end
 
         it "wraps smileys like :P" do
-          expect_html("foo:P", "\n<p>foo <tt>:P</tt> </p>\n")
+          expect_html("foo:P", "\n<p>foo <tt>:P</tt></p>\n")
         end
 
         it "wraps smileys like ;)" do
-          expect_html("foo;)", "\n<p>foo <tt>;)</tt> </p>\n")
+          expect_html("foo;)", "\n<p>foo <tt>;)</tt></p>\n")
         end
 
         it "wraps smileys like ;(" do
-          expect_html("foo;(", "\n<p>foo <tt>;(</tt> </p>\n")
+          expect_html("foo;(", "\n<p>foo <tt>;(</tt></p>\n")
         end
 
         it "wraps smileys like ;P" do
-          expect_html("foo;P", "\n<p>foo <tt>;P</tt> </p>\n")
+          expect_html("foo;P", "\n<p>foo <tt>;P</tt></p>\n")
         end
       end
 
       context "and it thinks the eyes are quotation marks" do
         it "wraps smileys like \")" do
-          expect_html("foo\")", "\n<p>foo <tt>:)</tt> </p>\n")
+          expect_html("foo\")", "\n<p>foo <tt>:)</tt></p>\n")
         end
 
         it "wraps smileys like \"(" do
-          expect_html("foo\"(", "\n<p>foo <tt>:(</tt> </p>\n")
+          expect_html("foo\"(", "\n<p>foo <tt>:(</tt></p>\n")
         end
 
         it "wraps smileys like \"P" do
-          expect_html("foo\"P", "\n<p>foo <tt>:P</tt> </p>\n")
+          expect_html("foo\"P", "\n<p>foo <tt>:P</tt></p>\n")
         end
       end
     end
@@ -471,7 +471,7 @@ describe Livescribe do
 
         <p>Hello <em>world</em>! This is still the «first» paragraph.</p>
         
-        <p>This is the second paragraph &amp;c, but "Livescribe" doesn't respect<sup class='uncertain'>(?)</sup> paragraph indentations — alas. <tt>:)</tt> </p>
+        <p>This is the second paragraph &amp;c, but "Livescribe" doesn't respect<sup class='uncertain'>(?)</sup> paragraph indentations — alas. <tt>:)</tt></p>
       END
 
       expect_html(input, output)

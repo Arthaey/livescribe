@@ -157,8 +157,8 @@ class Livescribe
 
   # Personal tweak: put smileys in <tt> tags.
   def wrap_smileys_in_tt!
-    @input.gsub!(/([[:punct:]])?(\s*|\b)([:;][)(P])(\s*|\b)/, "\\1 <tt>\\3</tt> ")
-    @input.gsub!(/([[:punct:]])?(\s*|\b)"([)(P])(\s*|\b)/, "\\1 <tt>:\\3</tt> ")
+    @input.gsub!(/([[:punct:]])?(\s*|\b)([:;][)(P])(\s*|\b)/, "\\1 <tt>\\3</tt>\\5")
+    @input.gsub!(/([[:punct:]])?(\s*|\b)"([)(P])(\s*|\b)/, "\\1 <tt>:\\3</tt>\\5")
   end
 
   # Personal tweak: put "(?)" into superscripts.
