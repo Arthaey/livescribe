@@ -131,6 +131,16 @@ describe Livescribe do
       end
   end
 
+  describe "#fix_horizontal_rule!" do
+    it "replaces a lone period with a horizonal rule" do
+        expect_html(".", "<hr>\n")
+    end
+
+    it "replaces a lone hyphen with a horizonal rule" do
+        expect_html("-", "<hr>\n")
+    end
+  end
+
   describe "#fix_quotation_marks!" do
     it "replaces double apostrophes with a quotation mark" do
       expect_html("''foo''", "\n<p>\"foo\"</p>\n")
@@ -465,6 +475,7 @@ describe Livescribe do
         <br>This is still the ← first 77 paragraph .
         <br>This is the   second paragraph &c, but ''Livescribe" doesn't
         <br>respect(?) paragraph indentations - alas.:)
+        -
       END
 
       output =<<-END.strip_heredoc
@@ -472,6 +483,8 @@ describe Livescribe do
         <p>Hello <em>world</em>! This is still the «first» paragraph.</p>
         
         <p>This is the second paragraph &amp;c, but "Livescribe" doesn't respect<sup class='uncertain'>(?)</sup> paragraph indentations — alas. <tt>:)</tt></p>
+
+        <hr>
       END
 
       expect_html(input, output)

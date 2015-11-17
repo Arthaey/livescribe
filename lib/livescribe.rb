@@ -54,6 +54,7 @@ class Livescribe
     guess_new_paragraphs!
     remove_extra_whitespace!
     remove_whitespace_around_asterisks!
+    fix_horizontal_rule!
     fix_quotation_marks!
     fix_dashes!
     wrap_smileys_in_tt!
@@ -100,6 +101,13 @@ class Livescribe
   # Livescribe tends to surround asterisks with whitespace.
   def remove_whitespace_around_asterisks!
     @input.gsub!(/\*\s*(.+?)\s*\*/m, "*\\1*")
+  end
+
+  def fix_horizontal_rule!
+    # Markdown supports multiple ways of writing a horizontal rule;
+    # use underscores rather than dashes or asterisks to minimize
+    # confusion with other markup.
+    @input.gsub!(/^[.-]$/, "___")
   end
 
   # Livescribe sometimes thinks a quotation mark is two apostrophes.
