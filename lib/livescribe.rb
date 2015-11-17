@@ -61,6 +61,7 @@ class Livescribe
     question_superscript!
     fix_parentheses!
     dictionary_fixes!
+    delete_X_words!
     insert_flickr!
 
     output = @@renderer.render(to_s)
@@ -184,6 +185,10 @@ class Livescribe
     @dictionary.each_pair do |search, replace|
       @input.gsub!(/\b#{search}\b/, replace)
     end
+  end
+
+  def delete_X_words!
+    @input.gsub!(/\s+?[^\s]+?\s?X\b/, "")
   end
 
   def insert_flickr!

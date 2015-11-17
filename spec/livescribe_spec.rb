@@ -438,6 +438,20 @@ describe Livescribe do
     end
   end
 
+  describe "#delete_X_words" do
+    it "deletes words ending in X" do
+      expect_html("foo barX", "\n<p>foo</p>\n")
+    end
+
+    it "deletes words followed by X" do
+      expect_html("foo bar X", "\n<p>foo</p>\n")
+    end
+
+    it "ignores lowercase x" do
+      expect_html("foo bar x qux", "\n<p>foo bar x qux</p>\n")
+    end
+  end
+
   describe "#insert_flickr" do
 
     expected_html = <<-FLICKR.strip_heredoc
@@ -474,7 +488,7 @@ describe Livescribe do
         Hello * world*!
         <br>This is still the ← first 77 paragraph .
         <br>This is the   second paragraph &c, but ''Livescribe" doesn't
-        <br>respect(?) paragraph indentations - alas.:)
+        <br>respect(?) paragraph inadentnzX indentations - alas.:)
         -
       END
 
