@@ -4,6 +4,10 @@ require "redcarpet"
 
 class LivescribeRenderer < Redcarpet::Render::HTML
 
+  def initialize(render_options = {})
+    super({:xhtml => true}.merge(render_options))
+  end
+
   # I prefer an extra newline between my block elements.
   def block_html(raw_html)
     "\n#{raw_html}"

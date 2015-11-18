@@ -133,11 +133,11 @@ describe Livescribe do
 
   describe "#fix_horizontal_rule!" do
     it "replaces a lone period with a horizonal rule" do
-        expect_html(".", "<hr>\n")
+        expect_html(".", "<hr/>\n")
     end
 
     it "replaces a lone hyphen with a horizonal rule" do
-        expect_html("-", "<hr>\n")
+        expect_html("-", "<hr/>\n")
     end
   end
 
@@ -498,7 +498,7 @@ describe Livescribe do
         
         <p>This is the second paragraph &amp;c, but "Livescribe" doesn't respect<sup class='uncertain'>(?)</sup> paragraph indentations — alas. <tt>:)</tt></p>
 
-        <hr>
+        <hr/>
       END
 
       expect_html(input, output)
